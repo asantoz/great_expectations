@@ -72,6 +72,11 @@ try:
 except (ImportError, AttributeError):
     sqla_databricks = None  # type: ignore[assignment]
 
+try:
+    import pyathena.sqlalchemy
+except ImportError:
+    pyathena.sqlalchemy = None
+
 _BIGQUERY_MODULE_NAME = "sqlalchemy_bigquery"
 
 from great_expectations.compatibility import bigquery as sqla_bigquery
@@ -229,6 +234,16 @@ def get_dialect_regex_expression(  # noqa: C901, PLR0911, PLR0912, PLR0915
     ):  # TypeError can occur if the driver was not installed and so is None
         pass
 
+    # athena
+    try:
+        if pyathena.sqlalchemy and isinstance(dialect, pyathena.sqlalchemy.rest.AthenaRestDialect):
+            if positive:
+                return sa.func.regexp_like(column, sqlalchemy.literal(regex))
+            else:
+                return sa.not_(sa.func.regexp_like(column, sqlalchemy.literal(regex)))
+    except AttributeError:
+        pass
+    
     try:
         # Clickhouse
         # noinspection PyUnresolvedReferences
