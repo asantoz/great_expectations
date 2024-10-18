@@ -299,9 +299,9 @@ def _sqlalchemy_map_condition_unexpected_count_value(
     count_case_statement: List[sqlalchemy.Label] = sa.case(  # type: ignore[assignment]
         (
             unexpected_condition,
-            sa.sql.expression.cast(1, sa.Numeric),
+            sa.sql.expression.cast(1, sa.Numeric(1,1)),
         ),
-        else_=sa.sql.expression.cast(0, sa.Numeric),
+        else_=sa.sql.expression.cast(0, sa.Numeric(1,1)),
     ).label("condition")
 
     count_selectable: sqlalchemy.Select = sa.select(count_case_statement)  # type: ignore[call-overload]
