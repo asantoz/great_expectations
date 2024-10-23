@@ -696,7 +696,7 @@ def column_reflection_fallback(  # noqa: C901, PLR0912, PLR0915
         else:
             # if a custom query was passed
             if sqlalchemy.TextClause and isinstance(selectable, sqlalchemy.TextClause):  # type: ignore[truthy-function]
-                query: sqlalchemy.TextClause = selectable
+                query: sqlalchemy.TextClause = sqlalchemy.TextClause(f"{selectable.text} limit 1")
             elif sqlalchemy.Table and isinstance(selectable, sqlalchemy.Table):  # type: ignore[truthy-function]
                 query = sa.select(sa.text("*")).select_from(selectable).limit(1)
             else:  # noqa: PLR5501
